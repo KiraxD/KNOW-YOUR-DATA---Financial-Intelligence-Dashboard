@@ -14,6 +14,7 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, render_template, request, send_file, session
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from dateutil import parser as date_parser
 
@@ -28,6 +29,9 @@ app.config['EXPORTS_FOLDER'] = 'exports'
 app.config['INSIGHTS_FOLDER'] = 'insights'
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
 ALLOWED_EXTENSIONS = {'xlsx', 'csv'}
+
+# Enable CORS for cross-origin requests from Netlify frontend
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -867,4 +871,13 @@ if __name__ == '__main__':
     for folder in [app.config['UPLOAD_FOLDER'], app.config['PROCESSED_FOLDER'],
                    app.config['EXPORTS_FOLDER'], app.config['INSIGHTS_FOLDER']]:
         os.makedirs(folder, exist_ok=True)
-    app.run(debug=True, port=5000)
+    
+    # Local development
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug, host='0.0.0.0', port=port)
+else:
+    # Production (gunicorn)
+    for folder in [app.config['UPLOAD_FOLDER'], app.config['PROCESSED_FOLDER'],
+                   app.config['EXPORTS_FOLDER'], app.config['INSIGHTS_FOLDER']]:
+        os.makedirs(folder, exist_ok=True)
