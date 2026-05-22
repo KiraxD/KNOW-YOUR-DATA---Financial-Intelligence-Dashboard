@@ -871,7 +871,7 @@ if __name__ == '__main__':
     for folder in [app.config['UPLOAD_FOLDER'], app.config['PROCESSED_FOLDER'],
                    app.config['EXPORTS_FOLDER'], app.config['INSIGHTS_FOLDER']]:
         os.makedirs(folder, exist_ok=True)
-    
+
     # Local development
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') != 'production'

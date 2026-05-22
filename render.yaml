@@ -7,6 +7,6 @@ services:
     startCommand: cd erp-dashboard && gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11
+        value: 3.12
       - key: PORT
         value: 10000
