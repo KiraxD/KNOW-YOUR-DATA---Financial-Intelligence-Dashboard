@@ -6,6 +6,9 @@
 // ─────────────────────────────────────────────
 // State
 // ─────────────────────────────────────────────
+// API Base URL for production
+const API_BASE = 'https://know-your-data-api.onrender.com';
+
 const State = {
   sessionId: null,
   exportId: null,
@@ -119,7 +122,7 @@ function handleFile(file) {
   const formData = new FormData();
   formData.append('file', file);
 
-  fetch('/upload', { method: 'POST', body: formData })
+  fetch(API_BASE + '/upload', { method: 'POST', body: formData })
     .then(r => r.json())
     .then(data => {
       if (data.error) throw new Error(data.error);
@@ -155,7 +158,7 @@ function completeProgress() {
 // Dashboard Data Loading
 // ─────────────────────────────────────────────
 function fetchDashboard(sid) {
-  return fetch(`/dashboard-data?session_id=${sid}`)
+  return fetch(`${API_BASE}/dashboard-data?session_id=${sid}`)
     .then(r => r.json())
     .then(data => {
       if (data.error) throw new Error(data.error);
@@ -593,15 +596,15 @@ $('pgNext').addEventListener('click', () => { State.page++; renderTablePage(); }
 // Export buttons
 $('btnExportCSV').addEventListener('click', () => {
   if (!State.exportId) return showToast('No data to export', 'error');
-  window.location = `/download-cleaned?export_id=${State.exportId}&format=csv`;
+  window.location = `${API_BASE}/download-cleaned?export_id=${State.exportId}&format=csv`;
 });
 $('btnExportXLSX').addEventListener('click', () => {
   if (!State.exportId) return showToast('No data to export', 'error');
-  window.location = `/download-cleaned?export_id=${State.exportId}&format=xlsx`;
+  window.location = `${API_BASE}/download-cleaned?export_id=${State.exportId}&format=xlsx`;
 });
 $('btnExportJSON').addEventListener('click', () => {
   if (!State.exportId) return showToast('No report to export', 'error');
-  window.location = `/download-report?export_id=${State.exportId}&format=json`;
+  window.location = `${API_BASE}/download-report?export_id=${State.exportId}&format=json`;
 });
 
 // New Upload button
