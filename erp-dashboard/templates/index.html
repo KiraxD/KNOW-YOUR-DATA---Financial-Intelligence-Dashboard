@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KNOW YOUR DATA — Financial Intelligence</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOP NAV
+  ══════════════════════════════════════ -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <span class="brand-icon">�</span>
+      <span class="brand-name">KNOW YOUR DATA</span>
+      <span class="brand-tag">Financial Intelligence</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-status" id="navStatus">Ready</span>
+      <div class="nav-dot" id="navDot"></div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       UPLOAD SECTION
+  ══════════════════════════════════════ -->
+  <section class="upload-section" id="uploadSection">
+    <div class="upload-hero">
+      <p class="upload-label">KNOW YOUR DATA PLATFORM</p>
+      <h1 class="upload-title">Upload your data.<br />Get instant insights & analysis.</h1>
+      <p class="upload-subtitle">Upload any Excel or CSV financial file to generate risk analysis, anomaly detection, AI classification, and downloadable insights.</p>
+    </div>
+
+    <div class="upload-zone" id="dropZone">
+      <div class="upload-zone-inner">
+        <div class="upload-icon-wrap">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="4" y="4" width="40" height="40" rx="12" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <path d="M24 14L24 30" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 22L24 14L32 22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 34H34" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="upload-zone-title">Drag & drop your file here</p>
+        <p class="upload-zone-sub">Supports <span class="tag">.xlsx</span> and <span class="tag">.csv</span> — up to 50 MB</p>
+        <label class="upload-btn" for="fileInput">
+          Browse File
+          <input type="file" id="fileInput" accept=".xlsx,.csv" hidden />
+        </label>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="upload-progress" id="uploadProgress" style="display:none">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-label" id="progressLabel">Uploading…</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       DASHBOARD  (hidden until data loaded)
+  ══════════════════════════════════════ -->
+  <main class="dashboard" id="dashboard" style="display:none">
+
+    <!-- ── Header ── -->
+    <header class="dash-header">
+      <div class="dash-header-left">
+        <p class="dash-label">DATA INTELLIGENCE REPORT</p>
+        <h2 class="dash-title" id="dashTitle">KNOW YOUR DATA</h2>
+        <p class="dash-meta" id="dashMeta"></p>
+      </div>
+      <div class="dash-header-right">
+        <button class="btn btn-ghost" id="btnNewUpload">↑ New Upload</button>
+        <div class="export-group">
+          <button class="btn btn-outline" id="btnExportCSV">CSV</button>
+          <button class="btn btn-outline" id="btnExportXLSX">XLSX</button>
+          <button class="btn btn-outline" id="btnExportJSON">Report</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── KPI Grid ── -->
+    <section class="kpi-grid" id="kpiGrid">
+      <!-- populated by JS -->
+    </section>
+
+    <!-- ── Detected Columns Banner ── -->
+    <div class="col-detect-banner" id="colDetectBanner">
+      <span class="col-detect-label">⚡ Auto-detected columns:</span>
+      <div class="col-detect-tags" id="colDetectTags"></div>
+    </div>
+
+    <!-- ── Insights Panel ── -->
+    <section class="insights-section">
+      <h3 class="section-title">AI Insights</h3>
+      <div class="insights-list" id="insightsList">
+        <!-- populated by JS -->
+      </div>
+    </section>
+
+    <!-- ── Charts Grid ── -->
+    <section class="charts-grid">
+      <div class="chart-card chart-card--wide">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Spend by Category</span>
+          <span class="chart-card-badge">Distribution</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartCategory"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Risk Severity</span>
+          <span class="chart-card-badge">Triage</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartRisk"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">AI Confidence</span>
+          <span class="chart-card-badge">Quality</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartConfidence"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card chart-card--wide">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Vendor Spend Concentration</span>
+          <span class="chart-card-badge">Top 10</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartVendor"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card" id="chartDeptCard">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Department Spend</span>
+          <span class="chart-card-badge">Breakdown</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartDept"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card" id="chartDupCard">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Duplicate Exposure</span>
+          <span class="chart-card-badge">Anomalies</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartDuplicate"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Transaction Table ── -->
+    <section class="table-section">
+      <div class="table-toolbar">
+        <h3 class="section-title" style="margin:0">Transactions</h3>
+        <div class="table-controls">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search vendor, category, flags…" />
+          <select class="filter-select" id="filterSeverity">
+            <option value="">All Severity</option>
+            <option value="CRITICAL">CRITICAL</option>
+            <option value="WARNING">WARNING</option>
+            <option value="INFO">INFO</option>
+          </select>
+          <select class="filter-select" id="filterCategory">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table" id="dataTable">
+          <thead>
+            <tr>
+              <th data-sort="vendor">Vendor <span class="sort-icon">↕</span></th>
+              <th data-sort="category">Category <span class="sort-icon">↕</span></th>
+              <th data-sort="amount">Amount <span class="sort-icon">↕</span></th>
+              <th data-sort="department">Dept</th>
+              <th data-sort="date">Date <span class="sort-icon">↕</span></th>
+              <th data-sort="confidence">Confidence <span class="sort-icon">↕</span></th>
+              <th data-sort="severity">Severity <span class="sort-icon">↕</span></th>
+              <th>Flags</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <button class="pg-btn" id="pgPrev">← Prev</button>
+        <span class="pg-info" id="pgInfo"></span>
+        <button class="pg-btn" id="pgNext">Next →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       LOADING OVERLAY
+  ══════════════════════════════════════ -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      <p class="loading-title">Processing Dataset</p>
+      <p class="loading-sub" id="loadingSub">Running AI classification engine…</p>
+      <div class="loading-steps" id="loadingSteps">
+        <span class="lstep" id="ls1">Parsing file</span>
+        <span class="lstep" id="ls2">Detecting columns</span>
+        <span class="lstep" id="ls3">Cleaning data</span>
+        <span class="lstep" id="ls4">AI classification</span>
+        <span class="lstep" id="ls5">Risk analysis</span>
+        <span class="lstep" id="ls6">Generating insights</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
